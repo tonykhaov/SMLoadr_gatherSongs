@@ -31,6 +31,13 @@ function getArtistsFolders(downloadsDir) {
 //   });
 // });
 
-getArtistsFolders(DOWNLOADS_DIR).then((res) =>
-  console.log(res.map((r) => path.join(DOWNLOADS_DIR, r)))
-);
+(async () => {
+  try {
+    const artistsFolders = await getArtistsFolders(DOWNLOADS_DIR);
+    const artistsFoldersPaths = artistsFolders
+      .filter((fileName) => fileName !== ".DS_STORE")
+      .map((fileName) => path.join(DOWNLOADS_DIR, fileName));
+  } catch (e) {
+    throw new Error(e);
+  }
+})();
