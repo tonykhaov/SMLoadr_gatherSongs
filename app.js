@@ -4,12 +4,29 @@ const fsPromises = fs.promises;
 
 const DOWNLOADS_DIR = path.join(__dirname, "/DOWNLOADS");
 
-function getArtists(downloadsDir) {
-  return fsPromises.readdir(downloadsDir, {}, (err, files) => {
+function getFiles(folderName) {
+  return fsPromises.readdir(folderName, {}, (err, files) => {
     if (err) return err;
     return files;
   });
 }
+
+(async () => {
+  try {
+    const artists = await getFiles(DOWNLOADS_DIR);
+
+    const artistsPaths = artists
+      .filter((fileName) => fileName !== ".DS_Store")
+      .map((fileName) => path.join(DOWNLOADS_DIR, fileName));
+
+    artistsPaths.forEach(async (artistPath) => {
+      const albums = await getFiles(artistPath);
+      const albumsPaths = albums.map((album) => path.join(artistPath, album));
+    });
+  } catch (e) {
+    throw new Error(e);
+  }
+})();
 
 // artistFoldersPaths.forEach((artistFolder) => {
 //   fs.readdir(artistFolder, {}, (err, files) => {
@@ -30,14 +47,3 @@ function getArtists(downloadsDir) {
 //     });
 //   });
 // });
-
-(async () => {
-  try {
-    const artists = await getArtists(DOWNLOADS_DIR);
-    const artistsPaths = artists
-      .filter((fileName) => fileName !== ".DS_STORE")
-      .map((fileName) => path.join(DOWNLOADS_DIR, fileName));
-  } catch (e) {
-    throw new Error(e);
-  }
-})();
