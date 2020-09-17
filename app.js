@@ -22,7 +22,10 @@ const DOWNLOADS_DIR = path.join(__dirname, "/DOWNLOADS");
 
       albumsPaths.forEach((albumPath) => {
         fs.readdir(albumPath, {}, (err, files) => {
-          console.log(files.filter((file) => /\.flac$/.test(file)));
+          const flacSongs = files
+            .filter((file) => /\.flac$/.test(file))
+            .map((song) => path.join(albumPath, song));
+          console.log(flacSongs);
         });
       });
     });
